@@ -14,11 +14,21 @@ app.use(express.urlencoded({ extended: true }));
 // Connect to MongoDB
 connectDB();
 
+// Import routes
+const itemRoutes = require('./routes/items');
+const saleRoutes = require('./routes/sales');
+
 // Basic test route
 app.get('/', (req, res) => {
   res.json({ 
     message: '✅ Inventory Management System API',
     status: 'Server is running',
+    version: '1.0.0',
+    endpoints: {
+      items: '/api/items',
+      sales: '/api/sales',
+      health: '/health'
+    },
     timestamp: new Date().toISOString()
   });
 });
@@ -32,11 +42,9 @@ app.get('/health', (req, res) => {
   });
 });
 
-// TODO: Import routes here (Day 2)
-// const itemRoutes = require('./routes/items');
-// const saleRoutes = require('./routes/sales');
-// app.use('/api/items', itemRoutes);
-// app.use('/api/sales', saleRoutes);
+// API Routes
+app.use('/api/items', itemRoutes);
+app.use('/api/sales', saleRoutes);
 
 // 404 handler
 app.use((req, res) => {
