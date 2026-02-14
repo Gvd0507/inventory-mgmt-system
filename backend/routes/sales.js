@@ -239,4 +239,27 @@ router.get('/:id', async (req, res) => {
   }
 });
 
+/**
+ * @route   DELETE /api/sales
+ * @desc    Delete all sales
+ * @access  Public
+ */
+router.delete('/', async (req, res) => {
+  try {
+    const result = await Sale.deleteMany({});
+    
+    res.json({
+      success: true,
+      message: `Deleted ${result.deletedCount} sales`,
+      deletedCount: result.deletedCount
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: 'Failed to delete sales',
+      message: error.message
+    });
+  }
+});
+
 module.exports = router;
