@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { itemsAPI, salesAPI, formatCurrency } from '../api';
+import { exportReportToCSV } from '../utils/exportData';
 
 function Reports({ showToast }) {
   const [items, setItems] = useState([]);
@@ -82,9 +83,37 @@ function Reports({ showToast }) {
     <div className="container">
       <div className="section-header">
         <h1 className="section-title">Reports & Analytics</h1>
-        <button className="btn btn-primary" onClick={loadReports}>
-          🔄 Refresh
-        </button>
+        <div style={{ display: 'flex', gap: '12px' }}>
+          <button 
+            className="btn btn-success" 
+            onClick={() => {
+              exportReportToCSV({
+                stats: {
+                  totalItems: items.length,
+                  totalStock: items.reduce((sum, item) => sum + item.quantity, 0),
+                  totalValue: items.reduce((sum, item) => sum + item.price * item.quantity, 0),
+                  totalSales: sales.length,
+                  totalRevenue,
+                  lowStockCount: lowStockItems.length,
+                },
+                items,
+                sales,
+              });
+              showToast('Report exported successfully!', 'success');
+            }}
+          >
+            📥 Export CSV
+          </button>
+          <button 
+            className="btn btn-primary" 
+            onClick={() => window.print()}
+          >
+            🖨️ Print
+          </button>
+          <button className="btn btn-primary" onClick={loadReports}>
+            🔄 Refresh
+          </button>
+        </div>
       </div>
 
       <div className="reports-grid">

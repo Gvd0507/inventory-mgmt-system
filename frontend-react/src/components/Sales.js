@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { itemsAPI, salesAPI, formatCurrency, formatDate } from '../api';
+import { exportSalesToCSV } from '../utils/exportData';
 
 function Sales({ showToast }) {
   const [items, setItems] = useState([]);
@@ -96,6 +97,16 @@ function Sales({ showToast }) {
     <div className="container">
       <div className="section-header">
         <h1 className="section-title">Sales</h1>
+        <button 
+          className="btn btn-success" 
+          onClick={() => {
+            exportSalesToCSV(sales);
+            showToast('Sales exported successfully!', 'success');
+          }}
+          disabled={sales.length === 0}
+        >
+          📥 Export CSV
+        </button>
       </div>
 
       {/* Record Sale Form */}
@@ -115,7 +126,7 @@ function Sales({ showToast }) {
                 <option value="">-- Choose an item --</option>
                 {items.map((item) => (
                   <option key={item._id} value={item._id}>
-                    {item.name} ({item.quantity} available) - ${item.price}
+                    {item.name} ({item.quantity} available) - {formatCurrency(item.price)}
                   </option>
                 ))}
               </select>
@@ -142,10 +153,6 @@ function Sales({ showToast }) {
               <div className="sale-preview-row">
                 <span className="sale-preview-label">Item</span>
                 <span className="sale-preview-value">{selectedItem.name}</span>
-              </div>
-              <div className="sale-preview-row">
-                <span className="sale-preview-label">Price per unit</span>
-                <span className="sale-preview-value">{formatCurrency(selectedItem.price)}</span>
               </div>
               <div className="sale-preview-row">
                 <span className="sale-preview-label">Quantity</span>
@@ -213,7 +220,6 @@ function Sales({ showToast }) {
                   <th>Date</th>
                   <th>Item</th>
                   <th>Quantity</th>
-                  <th>Unit Price</th>
                   <th>Total Amount</th>
                 </tr>
               </thead>
@@ -225,7 +231,6 @@ function Sales({ showToast }) {
                       <strong>{sale.itemName}</strong>
                     </td>
                     <td>{sale.quantitySold}</td>
-                    <td>{formatCurrency(sale.priceAtSale)}</td>
                     <td>
                       <strong style={{ color: 'var(--color-success)' }}>
                         {formatCurrency(sale.totalAmount)}

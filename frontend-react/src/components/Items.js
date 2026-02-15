@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { itemsAPI } from '../api';
+import { itemsAPI, formatCurrency } from '../api';
+import { exportItemsToCSV } from '../utils/exportData';
 
 function Items({ showToast }) {
   const [items, setItems] = useState([]);
@@ -73,8 +74,8 @@ function Items({ showToast }) {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleDelete = async (id) => {
-    if (!window.confirm('Are you sure you want to delete this item?')) {
+  const handleDelete = async (id, itemName) => {
+    if (!window.confirm(`Are you sure you want to delete "${itemName}"?\n\nThis action cannot be undone.`)) {
       return;
     }
 
@@ -120,6 +121,16 @@ function Items({ showToast }) {
     <div className="container">
       <div className="section-header">
         <h1 className="section-title">Items Management</h1>
+        <button 
+          className="btn btn-success" 
+          onClick={() => {
+            exportItemsToCSV(items);
+            showToast('Items exported successfully!', 'success');
+          }}
+          disabled={items.length === 0}
+        >
+          📥 Export CSV
+        </button>
       </div>
 
       {/* Add/Edit Form */}
@@ -157,15 +168,15 @@ function Items({ showToast }) {
 
           <div className="form-row">
             <div className="form-group">
-              <label className="form-label">Price ($) *</label>
+              <label className="form-label">Price (₹) *</label>
               <input
                 type="number"
                 name="price"
                 value={formData.price}
                 onChange={handleInputChange}
                 className="form-input"
-                placeholder="29.99"
-                step="0.01"
+                placeholder="99"
+                step="1"
                 min="0"
                 required
               />
@@ -267,7 +278,7 @@ function Items({ showToast }) {
                 )}
                 <div className="item-card-detail">
                   <span className="item-card-label">Price</span>
-                  <span className="item-card-value">${item.price.toFixed(2)}</span>
+                  <span className="item-card-value">{formatCurrency(item.price)}</span>
                 </div>
                 <div className="item-card-detail">
                   <span className="item-card-label">SKU</span>
@@ -276,7 +287,7 @@ function Items({ showToast }) {
                 <div className="item-card-detail">
                   <span className="item-card-label">Total Value</span>
                   <span className="item-card-value">
-                    ${(item.price * item.quantity).toFixed(2)}
+                    {formatCurrency(item.price * item.quantity)}
                   </span>
                 </div>
               </div>
@@ -285,7 +296,7 @@ function Items({ showToast }) {
                 <button onClick={() => handleEdit(item)} className="btn btn-primary">
                   ✏️ Edit
                 </button>
-                <button onClick={() => handleDelete(item._id)} className="btn btn-danger">
+                <button onClick={() => handleDelete(item._id, item.name)} className="btn btn-danger">
                   🗑️ Delete
                 </button>
               </div>

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { itemsAPI, salesAPI, formatCurrency } from '../api';
+import Charts from './Charts';
 
 function Dashboard({ showToast }) {
   const [stats, setStats] = useState({
@@ -135,6 +136,9 @@ function Dashboard({ showToast }) {
           </div>
         </div>
       </div>
+
+      {/* Charts Section */}
+      <Charts showToast={showToast} />
     </div>
   );
 }

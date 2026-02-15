@@ -62,10 +62,7 @@ export const salesAPI = {
 
 // Utility functions
 export const formatCurrency = (amount) => {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-  }).format(amount);
+  return '₹' + Math.round(amount).toLocaleString('en-IN');
 };
 
 export const formatDate = (dateString) => {

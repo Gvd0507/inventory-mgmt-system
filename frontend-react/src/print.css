@@ -1,0 +1,280 @@
+/* Print Styles for Inventory Management System */
+
+@media print {
+  /* Hide UI elements */
+  .navbar,
+  .nav-tab,
+  .btn,
+  button,
+  .form-card,
+  .form-actions,
+  .section-header button,
+  .toast-container,
+  input[type="text"],
+  input[type="number"],
+  select,
+  textarea {
+    display: none !important;
+  }
+
+  /* Reset page */
+  * {
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
+  body {
+    background: white !important;
+    color: black !important;
+    font-size: 12pt;
+    line-height: 1.5;
+  }
+
+  /* Page setup */
+  @page {
+    margin: 1cm;
+    size: A4 portrait;
+  }
+
+  /* Container */
+  .container {
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  /* Headers */
+  .section-header {
+    margin-bottom: 20px;
+    border-bottom: 2px solid #000;
+    padding-bottom: 10px;
+  }
+
+  .section-title {
+    font-size: 24pt;
+    font-weight: bold;
+    color: #000;
+  }
+
+  /* Show section header as-is */
+  .section-header {
+    display: block !important;
+  }
+
+  /* Cards */
+  .card,
+  .report-card,
+  .chart-card {
+    box-shadow: none !important;
+    border: 1px solid #ddd !important;
+    page-break-inside: avoid;
+    margin-bottom: 20px;
+    padding: 15px;
+    background: white !important;
+  }
+
+  .report-card-title,
+  .chart-title {
+    font-size: 14pt;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #000 !important;
+  }
+
+  /* Tables */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    page-break-inside: avoid;
+  }
+
+  thead {
+    display: table-header-group;
+    background: #f0f0f0 !important;
+  }
+
+  th {
+    background: #e0e0e0 !important;
+    color: #000 !important;
+    font-weight: bold;
+    padding: 8px;
+    border: 1px solid #999;
+    text-align: left;
+  }
+
+  td {
+    padding: 8px;
+    border: 1px solid #ccc;
+    color: #000 !important;
+  }
+
+  tr {
+    page-break-inside: avoid;
+  }
+
+  tbody tr:nth-child(even) {
+    background: #f9f9f9 !important;
+  }
+
+  /* Stats Grid */
+  .stats-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 15px;
+    margin-bottom: 20px;
+    page-break-inside: avoid;
+  }
+
+  .stat-card {
+    border: 1px solid #ddd !important;
+    padding: 15px;
+    page-break-inside: avoid;
+    background: white !important;
+  }
+
+  .stat-card h3 {
+    font-size: 18pt;
+    font-weight: bold;
+    color: #000 !important;
+    margin: 0;
+  }
+
+  .stat-card p {
+    font-size: 10pt;
+    color: #666 !important;
+    margin: 5px 0 0 0;
+  }
+
+  /* Reports Grid */
+  .reports-grid {
+    display: block !important;
+  }
+
+  /* Lists */
+  ul, ol {
+    margin: 10px 0;
+    padding-left: 20px;
+  }
+
+  li {
+    margin-bottom: 5px;
+    color: #000 !important;
+  }
+
+  /* Charts - hide or show as static image */
+  .charts-container {
+    page-break-before: always;
+  }
+
+  .chart-wrapper canvas {
+    max-width: 100% !important;
+    height: auto !important;
+  }
+
+  /* Links */
+  a {
+    text-decoration: underline;
+    color: #000 !important;
+  }
+
+  a[href]:after {
+    content: " (" attr(href) ")";
+    font-size: 9pt;
+    color: #666;
+  }
+
+  /* Page breaks */
+  .page-break {
+    page-break-after: always;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    page-break-after: avoid;
+    color: #000 !important;
+  }
+
+  /* Print header */
+  .container::before {
+    content: "Inventory Management System - Printed on " attr(data-print-date);
+    display: block;
+    text-align: center;
+    font-size: 10pt;
+    color: #666;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #ddd;
+  }
+
+  /* Item cells */
+  .items-grid {
+    display: block !important;
+  }
+
+  .item-card {
+    border: 1px solid #ddd !important;
+    padding: 10px;
+    margin-bottom: 15px;
+    page-break-inside: avoid;
+    background: white !important;
+  }
+
+  /* Sale records */
+  .sales-list {
+    display: block !important;
+  }
+
+  .sale-item {
+    border: 1px solid #ddd !important;
+    padding: 10px;
+    margin-bottom: 10px;
+    page-break-inside: avoid;
+    background: white !important;
+  }
+
+  /* Empty states - hide */
+  .empty-state {
+    display: none !important;
+  }
+
+  /* Loading states - hide */
+  .loading-container {
+    display: none !important;
+  }
+
+  /* Ensure visibility of important elements */
+  .print-show {
+    display: block !important;
+  }
+
+  /* Hide specific elements */
+  .no-print {
+    display: none !important;
+  }
+
+  /* Colors for print (grayscale friendly) */
+  .stat-icon,
+  .badge {
+    color: #000 !important;
+    background: #f0f0f0 !important;
+    border: 1px solid #999 !important;
+  }
+
+  /* Footer */
+  .container::after {
+    content: "Page " counter(page) " of " counter(pages);
+    display: block;
+    text-align: center;
+    font-size: 9pt;
+    color: #666;
+    margin-top: 30px;
+    padding-top: 10px;
+    border-top: 1px solid #ddd;
+  }
+
+  /* Optimize text for print */
+  p, li, td, th {
+    orphans: 3;
+    widows: 3;
+  }
+}
