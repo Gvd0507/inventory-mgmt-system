@@ -30,8 +30,8 @@ ChartJS.register(
 );
 
 // Chart.js default options
-ChartJS.defaults.font.family = '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
-ChartJS.defaults.color = '#8E8E93';
+ChartJS.defaults.font.family = '"Helvetica Neue", Helvetica, Arial, sans-serif';
+ChartJS.defaults.color = '#6B7280';
 
 function Charts({ showToast }) {
   const [items, setItems] = useState([]);
@@ -82,13 +82,13 @@ function Charts({ showToast }) {
         {
           label: 'Revenue',
           data: revenues,
-          borderColor: '#007AFF',
-          backgroundColor: 'rgba(0, 122, 255, 0.1)',
+          borderColor: '#6B7280',
+          backgroundColor: 'rgba(107, 114, 128, 0.1)',
           fill: true,
           tension: 0.4,
           borderWidth: 2,
           pointRadius: 4,
-          pointBackgroundColor: '#007AFF',
+          pointBackgroundColor: '#6B7280',
           pointBorderColor: '#fff',
           pointBorderWidth: 2,
           pointHoverRadius: 6,
@@ -152,13 +152,13 @@ function Charts({ showToast }) {
     }
 
     const colors = [
-      '#007AFF', // Blue
-      '#34C759', // Green
-      '#FF9500', // Orange
-      '#FF3B30', // Red
-      '#AF52DE', // Purple
-      '#FFD60A', // Yellow
-      '#8E8E93', // Gray
+      '#6B7280', // Slate Grey
+      '#4B5563', // Dark Grey
+      '#9CA3AF', // Medium Grey
+      '#D1D5DB', // Light Grey
+      '#374151', // Charcoal
+      '#E5E7EB', // Very Light Grey
+      '#1F2937', // Dark Charcoal
     ];
 
     return {
@@ -187,7 +187,7 @@ function Charts({ showToast }) {
           label: 'Quantity',
           data: lowStockItems.map((item) => item.quantity),
           backgroundColor: lowStockItems.map((item) =>
-            item.quantity < 5 ? '#FF3B30' : '#FF9500'
+            item.quantity < 5 ? '#EF4444' : '#F59E0B'
           ),
           borderRadius: 6,
           borderWidth: 0,
