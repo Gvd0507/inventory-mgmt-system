@@ -2,17 +2,18 @@ const express = require('express');
 const router = express.Router();
 const Sale = require('../models/Sale');
 const Item = require('../models/Item');
+const { protect, adminOnly } = require('../middleware/auth');
 
 /**
  * @route   POST /api/sales
  * @desc    Create new sale (sell item)
  * @body    { itemId, quantitySold }
- * @access  Public
+ * @access  Private
  * 
  * CRITICAL: Uses atomic operations to prevent race conditions
  * Based on DATABASE_DOCUMENTATION.md Query 3
  */
-router.post('/', async (req, res) => {
+router.post('/', protect, async (req, res) => {
   try {
     const { itemId, quantitySold } = req.body;
 
@@ -242,9 +243,9 @@ router.get('/:id', async (req, res) => {
 /**
  * @route   DELETE /api/sales
  * @desc    Delete all sales
- * @access  Public
+ * @access  Private/Admin
  */
-router.delete('/', async (req, res) => {
+router.delete('/', protect, adminOnly, async (req, res) => {
   try {
     const result = await Sale.deleteMany({});
     

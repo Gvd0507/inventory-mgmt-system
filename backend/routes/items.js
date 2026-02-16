@@ -1,24 +1,70 @@
 const express = require('express');
 const router = express.Router();
 const Item = require('../models/Item');
+const { protect, adminOnly } = require('../middleware/auth');
 
 /**
  * @route   GET /api/items
- * @desc    Get all items with optional search
- * @query   search - Optional search term for item name
+ * @desc    Get all items with optional filters
+ * @query   search, category, minPrice, maxPrice, minQuantity, maxQuantity, sortBy
  * @access  Public
  */
 router.get('/', async (req, res) => {
   try {
-    const { search } = req.query;
+    const { 
+      search, 
+      category, 
+      minPrice, 
+      maxPrice, 
+      minQuantity, 
+      maxQuantity, 
+      sortBy = 'createdAt' 
+    } = req.query;
+    
     let query = {};
 
-    // If search parameter exists, filter by name (case-insensitive regex)
+    // Search by name (case-insensitive regex)
     if (search) {
       query.name = { $regex: search, $options: 'i' };
     }
 
-    const items = await Item.find(query).sort({ createdAt: -1 });
+    // Filter by category
+    if (category && category !== 'all') {
+      query.category = category;
+    }
+
+    // Filter by price range
+    if (minPrice || maxPrice) {
+      query.price = {};
+      if (minPrice) query.price.$gte = parseFloat(minPrice);
+      if (maxPrice) query.price.$lte = parseFloat(maxPrice);
+    }
+
+    // Filter by quantity/stock level
+    if (minQuantity || maxQuantity) {
+      query.quantity = {};
+      if (minQuantity) query.quantity.$gte = parseInt(minQuantity);
+      if (maxQuantity) query.quantity.$lte = parseInt(maxQuantity);
+    }
+
+    // Sorting
+    let sortOption = {};
+    switch (sortBy) {
+      case 'name':
+        sortOption.name = 1;
+        break;
+      case 'price':
+        sortOption.price = 1;
+        break;
+      case 'quantity':
+        sortOption.quantity = 1;
+        break;
+      case 'createdAt':
+      default:
+        sortOption.createdAt = -1;
+    }
+
+    const items = await Item.find(query).sort(sortOption);
     
     res.json({
       success: true,
@@ -75,9 +121,9 @@ router.get('/:id', async (req, res) => {
  * @route   POST /api/items
  * @desc    Create new item
  * @body    { name, description, category, price, quantity, sku }
- * @access  Public
+ * @access  Private
  */
-router.post('/', async (req, res) => {
+router.post('/', protect, async (req, res) => {
   try {
     const { name, description, category, price, quantity, sku } = req.body;
 
@@ -144,9 +190,9 @@ router.post('/', async (req, res) => {
  * @route   PUT /api/items/:id
  * @desc    Update item by ID
  * @body    { name, description, category, price, quantity, sku }
- * @access  Public
+ * @access  Private
  */
-router.put('/:id', async (req, res) => {
+router.put('/:id', protect, async (req, res) => {
   try {
     const { name, description, category, price, quantity, sku } = req.body;
 
@@ -225,9 +271,9 @@ router.put('/:id', async (req, res) => {
 /**
  * @route   DELETE /api/items/:id
  * @desc    Delete item by ID
- * @access  Public
+ * @access  Private/Admin
  */
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', protect, adminOnly, async (req, res) => {
   try {
     const item = await Item.findByIdAndDelete(req.params.id);
 
@@ -283,6 +329,86 @@ router.get('/low-stock/:threshold', async (req, res) => {
     res.status(500).json({
       success: false,
       error: 'Failed to fetch low stock items',
+      message: error.message
+    });
+  }
+});
+
+/**
+ * @route   PUT /api/items/batch/update
+ * @desc    Batch update multiple items
+ * @body    { ids: [], updates: {} }
+ * @access  Private
+ */
+router.put('/batch/update', protect, async (req, res) => {
+  try {
+    const { ids, updates } = req.body;
+
+    if (!ids || !Array.isArray(ids) || ids.length === 0) {
+      return res.status(400).json({
+        success: false,
+        error: 'Please provide an array of item IDs'
+      });
+    }
+
+    if (!updates || Object.keys(updates).length === 0) {
+      return res.status(400).json({
+        success: false,
+        error: 'Please provide updates object'
+      });
+    }
+
+    // Update multiple items
+    const result = await Item.updateMany(
+      { _id: { $in: ids } },
+      { $set: updates },
+      { runValidators: true }
+    );
+
+    res.json({
+      success: true,
+      message: `${result.modifiedCount} items updated successfully`,
+      matched: result.matchedCount,
+      modified: result.modifiedCount
+    });
+  } catch (error) {
+    res.status(400).json({
+      success: false,
+      error: 'Batch update failed',
+      message: error.message
+    });
+  }
+});
+
+/**
+ * @route   DELETE /api/items/batch/delete
+ * @desc    Batch delete multiple items
+ * @body    { ids: [] }
+ * @access  Private/Admin
+ */
+router.delete('/batch/delete', protect, adminOnly, async (req, res) => {
+  try {
+    const { ids } = req.body;
+
+    if (!ids || !Array.isArray(ids) || ids.length === 0) {
+      return res.status(400).json({
+        success: false,
+        error: 'Please provide an array of item IDs'
+      });
+    }
+
+    // Delete multiple items
+    const result = await Item.deleteMany({ _id: { $in: ids } });
+
+    res.json({
+      success: true,
+      message: `${result.deletedCount} items deleted successfully`,
+      deletedCount: result.deletedCount
+    });
+  } catch (error) {
+    res.status(400).json({
+      success: false,
+      error: 'Batch delete failed',
       message: error.message
     });
   }

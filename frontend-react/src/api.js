@@ -3,18 +3,26 @@ const API_BASE_URL = 'http://localhost:5000/api';
 // Helper function for API calls
 async function apiCall(endpoint, options = {}) {
   try {
+    const token = localStorage.getItem('authToken');
+    const headers = {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    };
+
+    // Add Authorization header if token exists
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+
     const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-      headers: {
-        'Content-Type': 'application/json',
-        ...options.headers,
-      },
+      headers,
       ...options,
     });
 
     const data = await response.json();
     
     if (!data.success) {
-      throw new Error(data.error || 'API call failed');
+      throw new Error(data.error || data.message || 'API call failed');
     }
     
     return data;

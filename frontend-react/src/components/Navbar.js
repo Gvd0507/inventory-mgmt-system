@@ -1,31 +1,68 @@
 import React from 'react';
+import { NavLink, useNavigate } from 'react-router-dom';
+import { LogOut, User, Settings as SettingsIcon } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
+import NotificationCenter from './NotificationCenter';
 
-function Navbar({ activeTab, setActiveTab }) {
+function Navbar() {
+  const { user, logout, isAdmin } = useAuth();
+  const navigate = useNavigate();
+
   const tabs = [
-    { id: 'dashboard', name: 'Dashboard', icon: '📊' },
-    { id: 'items', name: 'Items', icon: '📦' },
-    { id: 'sales', name: 'Sales', icon: '💰' },
-    { id: 'reports', name: 'Reports', icon: '📈' },
+    { id: 'dashboard', path: '/', name: 'Dashboard', icon: '📊' },
+    { id: 'items', path: '/items', name: 'Items', icon: '📦' },
+    { id: 'sales', path: '/sales', name: 'Sales', icon: '💰' },
+    { id: 'reports', path: '/reports', name: 'Reports', icon: '📈' },
   ];
+
+  const handleLogout = () => {
+    if (window.confirm('Are you sure you want to logout?')) {
+      logout();
+      navigate('/login');
+    }
+  };
 
   return (
     <nav className="navbar">
       <div className="navbar-container">
-        <a href="/" className="navbar-brand">
+        <NavLink to="/" className="navbar-brand">
           <div className="navbar-brand-icon">📦</div>
           <span>Inventory Pro</span>
-        </a>
+        </NavLink>
         <div className="navbar-tabs">
           {tabs.map((tab) => (
-            <button
+            <NavLink
               key={tab.id}
-              className={`nav-tab ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
+              to={tab.path}
+              className={({ isActive }) => `nav-tab ${isActive ? 'active' : ''}`}
+              end={tab.path === '/'}
             >
               <span>{tab.icon}</span>
               <span>{tab.name}</span>
-            </button>
+            </NavLink>
           ))}
+        </div>
+        <div className="navbar-user">
+          <NotificationCenter />
+          <div className="user-info">
+            <User size={18} />
+            <span className="user-name">{user?.username}</span>
+            {user?.role === 'admin' && (
+              <span className="user-badge">Admin</span>
+            )}
+          </div>
+          {isAdmin && (
+            <button 
+              onClick={() => navigate('/settings')} 
+              className="btn-icon" 
+              title="Settings"
+            >
+              <SettingsIcon size={18} />
+            </button>
+          )}
+          <button onClick={handleLogout} className="btn-logout" title="Logout">
+            <LogOut size={18} />
+          </button>
         </div>
       </div>
     </nav>

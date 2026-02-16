@@ -100,39 +100,33 @@ function Dashboard({ showToast }) {
         </div>
       </div>
 
-      <div className="card">
-        <h3 style={{ marginBottom: '1rem', fontSize: '1.25rem' }}>Quick Insights</h3>
-        <div style={{ display: 'grid', gap: '1rem' }}>
-          <div
-            style={{
-              padding: '1rem',
-              background: 'var(--light-gray)',
-              borderRadius: '8px',
-            }}
-          >
-            <strong style={{ color: 'var(--primary)' }}>Total Revenue:</strong>{' '}
-            {formatCurrency(stats.totalRevenue)}
+      <div className="insights-card">
+        <h3 className="insights-title">Quick Insights</h3>
+        <div className="insights-grid">
+          <div className="insight-item">
+            <div className="insight-icon primary">💰</div>
+            <div className="insight-content">
+              <span className="insight-label">Total Revenue</span>
+              <span className="insight-value">{formatCurrency(stats.totalRevenue)}</span>
+            </div>
           </div>
-          <div
-            style={{
-              padding: '1rem',
-              background: 'var(--light-gray)',
-              borderRadius: '8px',
-            }}
-          >
-            <strong style={{ color: 'var(--warning)' }}>Low Stock Items:</strong>{' '}
-            {stats.lowStockCount}{' '}
-            {stats.lowStockCount > 0 && '⚠️'}
+          <div className="insight-item">
+            <div className="insight-icon warning">⚠️</div>
+            <div className="insight-content">
+              <span className="insight-label">Low Stock Items</span>
+              <span className="insight-value">
+                {stats.lowStockCount} {stats.lowStockCount > 0 ? 'items' : ''}
+              </span>
+            </div>
           </div>
-          <div
-            style={{
-              padding: '1rem',
-              background: 'var(--light-gray)',
-              borderRadius: '8px',
-            }}
-          >
-            <strong style={{ color: 'var(--secondary)' }}>Avg. Sale Value:</strong>{' '}
-            {formatCurrency(stats.totalSales > 0 ? stats.totalRevenue / stats.totalSales : 0)}
+          <div className="insight-item">
+            <div className="insight-icon info">📈</div>
+            <div className="insight-content">
+              <span className="insight-label">Avg. Sale Value</span>
+              <span className="insight-value">
+                {formatCurrency(stats.totalSales > 0 ? stats.totalRevenue / stats.totalSales : 0)}
+              </span>
+            </div>
           </div>
         </div>
       </div>
