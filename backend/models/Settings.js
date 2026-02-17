@@ -7,62 +7,44 @@ const settingsSchema = new mongoose.Schema({
     default: 'app_settings'
   },
   
-  // General Settings
+  // Essential Settings for Small Shop
   businessName: {
     type: String,
     default: 'Inventory Pro'
   },
-  businessAddress: {
-    type: String,
-    default: ''
-  },
-  businessPhone: {
-    type: String,
-    default: ''
-  },
-  businessEmail: {
-    type: String,
-    default: ''
-  },
   
-  // Currency Settings
+  // Currency (most shops use one currency)
   currency: {
     type: String,
     default: '₹',
     enum: ['₹', '$', '€', '£', '¥']
   },
-  currencyCode: {
-    type: String,
-    default: 'INR',
-    enum: ['INR', 'USD', 'EUR', 'GBP', 'JPY']
-  },
   
-  // Alert Settings
+  // Low Stock Alert Threshold
   lowStockThreshold: {
     type: Number,
     default: 10,
     min: 1
   },
-  enableEmailAlerts: {
-    type: Boolean,
-    default: false
+  
+  // Tax/GST Percentage (ESSENTIAL for Indian shops!)
+  taxPercentage: {
+    type: Number,
+    default: 18,  // GST 18% common in India
+    min: 0,
+    max: 100
   },
-  alertEmail: {
+  
+  // Contact Information (for receipts/invoices)
+  phoneNumber: {
     type: String,
     default: ''
   },
   
-  // Display Settings
-  itemsPerPage: {
-    type: Number,
-    default: 20,
-    min: 10,
-    max: 100
-  },
-  dateFormat: {
+  // Receipt Footer (shop address, thank you message, etc.)
+  receiptFooter: {
     type: String,
-    default: 'MM/DD/YYYY',
-    enum: ['MM/DD/YYYY', 'DD/MM/YYYY', 'YYYY-MM-DD']
+    default: 'Thank you for your business!'
   }
 }, {
   timestamps: true

@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Sale = require('../models/Sale');
 const Item = require('../models/Item');
-const { protect, adminOnly } = require('../middleware/auth');
+const { protect } = require('../middleware/auth');
 
 /**
  * @route   POST /api/sales
@@ -243,9 +243,9 @@ router.get('/:id', async (req, res) => {
 /**
  * @route   DELETE /api/sales
  * @desc    Delete all sales
- * @access  Private/Admin
+ * @access  Private
  */
-router.delete('/', protect, adminOnly, async (req, res) => {
+router.delete('/', protect, async (req, res) => {
   try {
     const result = await Sale.deleteMany({});
     

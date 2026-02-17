@@ -1,14 +1,14 @@
 const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
-const { protect, adminOnly, generateToken } = require('../middleware/auth');
+const { protect, generateToken } = require('../middleware/auth');
 
 // @route   POST /api/auth/register
 // @desc    Register new user
 // @access  Public
 router.post('/register', async (req, res) => {
   try {
-    const { username, email, password, role } = req.body;
+    const { username, email, password } = req.body;
 
     // Check if user exists
     const existingUser = await User.findOne({ 
@@ -26,8 +26,7 @@ router.post('/register', async (req, res) => {
     const user = await User.create({
       username,
       email,
-      password,
-      role: role || 'staff'
+      password
     });
 
     // Generate token
@@ -40,8 +39,7 @@ router.post('/register', async (req, res) => {
       user: {
         id: user._id,
         username: user.username,
-        email: user.email,
-        role: user.role
+        email: user.email
       }
     });
   } catch (error) {
@@ -88,14 +86,6 @@ router.post('/login', async (req, res) => {
       });
     }
 
-    // Check if active
-    if (!user.isActive) {
-      return res.status(401).json({ 
-        success: false, 
-        message: 'Account is inactive' 
-      });
-    }
-
     // Generate token
     const token = generateToken(user._id);
 
@@ -106,8 +96,7 @@ router.post('/login', async (req, res) => {
       user: {
         id: user._id,
         username: user.username,
-        email: user.email,
-        role: user.role
+        email: user.email
       }
     });
   } catch (error) {
@@ -127,60 +116,6 @@ router.get('/me', protect, async (req, res) => {
     success: true,
     user: req.user
   });
-});
-
-// @route   GET /api/auth/users
-// @desc    Get all users (Admin only)
-// @access  Private/Admin
-router.get('/users', protect, adminOnly, async (req, res) => {
-  try {
-    const users = await User.find().sort({ createdAt: -1 });
-    res.json({
-      success: true,
-      count: users.length,
-      users
-    });
-  } catch (error) {
-    res.status(400).json({ 
-      success: false, 
-      message: 'Failed to fetch users', 
-      error: error.message 
-    });
-  }
-});
-
-// @route   PUT /api/auth/users/:id
-// @desc    Update user (Admin only)
-// @access  Private/Admin
-router.put('/users/:id', protect, adminOnly, async (req, res) => {
-  try {
-    const { role, isActive } = req.body;
-    
-    const user = await User.findByIdAndUpdate(
-      req.params.id,
-      { role, isActive },
-      { new: true, runValidators: true }
-    );
-
-    if (!user) {
-      return res.status(404).json({ 
-        success: false, 
-        message: 'User not found' 
-      });
-    }
-
-    res.json({
-      success: true,
-      message: 'User updated successfully',
-      user
-    });
-  } catch (error) {
-    res.status(400).json({ 
-      success: false, 
-      message: 'Update failed', 
-      error: error.message 
-    });
-  }
 });
 
 module.exports = router;

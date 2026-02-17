@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Item = require('../models/Item');
-const { protect, adminOnly } = require('../middleware/auth');
+const { protect } = require('../middleware/auth');
 
 /**
  * @route   GET /api/items
@@ -271,9 +271,9 @@ router.put('/:id', protect, async (req, res) => {
 /**
  * @route   DELETE /api/items/:id
  * @desc    Delete item by ID
- * @access  Private/Admin
+ * @access  Private
  */
-router.delete('/:id', protect, adminOnly, async (req, res) => {
+router.delete('/:id', protect, async (req, res) => {
   try {
     const item = await Item.findByIdAndDelete(req.params.id);
 
@@ -329,86 +329,6 @@ router.get('/low-stock/:threshold', async (req, res) => {
     res.status(500).json({
       success: false,
       error: 'Failed to fetch low stock items',
-      message: error.message
-    });
-  }
-});
-
-/**
- * @route   PUT /api/items/batch/update
- * @desc    Batch update multiple items
- * @body    { ids: [], updates: {} }
- * @access  Private
- */
-router.put('/batch/update', protect, async (req, res) => {
-  try {
-    const { ids, updates } = req.body;
-
-    if (!ids || !Array.isArray(ids) || ids.length === 0) {
-      return res.status(400).json({
-        success: false,
-        error: 'Please provide an array of item IDs'
-      });
-    }
-
-    if (!updates || Object.keys(updates).length === 0) {
-      return res.status(400).json({
-        success: false,
-        error: 'Please provide updates object'
-      });
-    }
-
-    // Update multiple items
-    const result = await Item.updateMany(
-      { _id: { $in: ids } },
-      { $set: updates },
-      { runValidators: true }
-    );
-
-    res.json({
-      success: true,
-      message: `${result.modifiedCount} items updated successfully`,
-      matched: result.matchedCount,
-      modified: result.modifiedCount
-    });
-  } catch (error) {
-    res.status(400).json({
-      success: false,
-      error: 'Batch update failed',
-      message: error.message
-    });
-  }
-});
-
-/**
- * @route   DELETE /api/items/batch/delete
- * @desc    Batch delete multiple items
- * @body    { ids: [] }
- * @access  Private/Admin
- */
-router.delete('/batch/delete', protect, adminOnly, async (req, res) => {
-  try {
-    const { ids } = req.body;
-
-    if (!ids || !Array.isArray(ids) || ids.length === 0) {
-      return res.status(400).json({
-        success: false,
-        error: 'Please provide an array of item IDs'
-      });
-    }
-
-    // Delete multiple items
-    const result = await Item.deleteMany({ _id: { $in: ids } });
-
-    res.json({
-      success: true,
-      message: `${result.deletedCount} items deleted successfully`,
-      deletedCount: result.deletedCount
-    });
-  } catch (error) {
-    res.status(400).json({
-      success: false,
-      error: 'Batch delete failed',
       message: error.message
     });
   }

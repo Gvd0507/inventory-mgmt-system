@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { itemsAPI, salesAPI, formatCurrency } from '../api';
 import Charts from './Charts';
 
 function Dashboard({ showToast }) {
+  const navigate = useNavigate();
   const [stats, setStats] = useState({
     totalItems: 0,
     totalStock: 0,
@@ -10,8 +12,10 @@ function Dashboard({ showToast }) {
     totalSales: 0,
     totalRevenue: 0,
     lowStockCount: 0,
+    lowStockItems: [],
   });
   const [loading, setLoading] = useState(true);
+  const [showLowStockBanner, setShowLowStockBanner] = useState(true);
 
   useEffect(() => {
     loadDashboard();
@@ -29,9 +33,11 @@ function Dashboard({ showToast }) {
       const sales = salesData.data || [];
 
       const totalStock = items.reduce((sum, item) => sum + item.quantity, 0);
-      const totalValue = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
-      const totalRevenue = sales.reduce((sum, sale) => sum + sale.totalAmount, 0);
-      const lowStockCount = items.filter((item) => item.quantity < 10).length;
+      const totalValue = items.reduce((sum, item) => sum + (item.quantity * item.price), 0);
+      const totalRevenue = sales.reduce((sum, sale) => sum + sale.totalPrice, 0);
+      // Use per-item reorderPoint instead of global threshold
+      const lowStockItems = items.filter((item) => item.quantity <= (item.reorderPoint || 10));
+      const lowStockCount = lowStockItems.length;
 
       setStats({
         totalItems: items.length,
@@ -40,6 +46,7 @@ function Dashboard({ showToast }) {
         totalSales: sales.length,
         totalRevenue,
         lowStockCount,
+        lowStockItems,
       });
     } catch (error) {
       showToast('Failed to load dashboard data', 'error');
@@ -65,6 +72,34 @@ function Dashboard({ showToast }) {
           🔄 Refresh
         </button>
       </div>
+
+      {/* Low Stock Alert Banner */}
+      {showLowStockBanner && stats.lowStockCount > 0 && (
+        <div className="alert-banner warning">
+          <div className="alert-banner-content">
+            <span className="alert-icon">⚠️</span>
+            <div className="alert-text">
+              <strong>{stats.lowStockCount} item{stats.lowStockCount > 1 ? 's' : ''}</strong> running low on stock!
+              <div className="low-stock-items-preview">
+                {stats.lowStockItems.slice(0, 3).map(item => (
+                  <span key={item._id} className="low-stock-badge">
+                    {item.name} ({item.quantity} left)
+                  </span>
+                ))}
+                {stats.lowStockCount > 3 && <span className="more-items">+{stats.lowStockCount - 3} more</span>}
+              </div>
+            </div>
+            <div className="alert-actions">
+              <button className="btn-alert-action" onClick={() => navigate('/purchases')}>
+                Restock Now
+              </button>
+              <button className="btn-alert-close" onClick={() => setShowLowStockBanner(false)}>
+                ✕
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="stats-grid">
         <div className="stat-card">

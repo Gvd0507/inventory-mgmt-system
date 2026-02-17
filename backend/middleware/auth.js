@@ -34,31 +34,12 @@ exports.protect = async (req, res, next) => {
       });
     }
 
-    if (!req.user.isActive) {
-      return res.status(401).json({ 
-        success: false, 
-        message: 'User account is inactive' 
-      });
-    }
-
     next();
   } catch (error) {
     res.status(401).json({ 
       success: false, 
       message: 'Not authorized, token failed',
       error: error.message 
-    });
-  }
-};
-
-// Admin only middleware
-exports.adminOnly = (req, res, next) => {
-  if (req.user && req.user.role === 'admin') {
-    next();
-  } else {
-    res.status(403).json({ 
-      success: false, 
-      message: 'Access denied. Admin only.' 
     });
   }
 };

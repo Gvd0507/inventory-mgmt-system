@@ -68,6 +68,20 @@ export const salesAPI = {
   getStats: () => apiCall('/sales/stats'),
 };
 
+// Purchases API
+export const purchasesAPI = {
+  getAll: () => apiCall('/purchases'),
+  
+  create: (purchaseData) => apiCall('/purchases', {
+    method: 'POST',
+    body: JSON.stringify(purchaseData),
+  }),
+  
+  getStats: () => apiCall('/purchases/stats'),
+  
+  getSuppliers: () => apiCall('/purchases/suppliers'),
+};
+
 // Utility functions
 export const formatCurrency = (amount) => {
   return '₹' + Math.round(amount).toLocaleString('en-IN');

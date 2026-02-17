@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Settings = require('../models/Settings');
-const { protect, adminOnly } = require('../middleware/auth');
+const { protect } = require('../middleware/auth');
 
 /**
  * @route   GET /api/settings
@@ -33,9 +33,9 @@ router.get('/', protect, async (req, res) => {
 /**
  * @route   PUT /api/settings
  * @desc    Update application settings
- * @access  Private/Admin
+ * @access  Private
  */
-router.put('/', protect, adminOnly, async (req, res) => {
+router.put('/', protect, async (req, res) => {
   try {
     const updates = req.body;
     
@@ -68,9 +68,9 @@ router.put('/', protect, adminOnly, async (req, res) => {
 /**
  * @route   POST /api/settings/reset
  * @desc    Reset settings to defaults
- * @access  Private/Admin
+ * @access  Private
  */
-router.post('/reset', protect, adminOnly, async (req, res) => {
+router.post('/reset', protect, async (req, res) => {
   try {
     // Delete existing settings
     await Settings.findByIdAndDelete('app_settings');

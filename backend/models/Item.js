@@ -30,6 +30,12 @@ const itemSchema = new mongoose.Schema({
     min: [0, 'Price cannot be negative']
   },
   
+  costPrice: {
+    type: Number,
+    default: 0,
+    min: [0, 'Cost price cannot be negative']
+  },
+  
   quantity: {
     type: Number,
     required: [true, 'Quantity is required'],
@@ -40,12 +46,26 @@ const itemSchema = new mongoose.Schema({
     }
   },
   
+  // Per-item reorder point (when to restock this specific item)
+  reorderPoint: {
+    type: Number,
+    default: 10,
+    min: [0, 'Reorder point cannot be negative']
+  },
+  
   sku: {
     type: String,
     required: [true, 'SKU is required'],
     unique: true,
     trim: true,
     uppercase: true
+  },
+  
+  // Preferred supplier for restocking (realistic feature)
+  preferredSupplier: {
+    type: String,
+    default: '',
+    trim: true
   }
 }, {
   timestamps: true  // Automatically creates createdAt and updatedAt

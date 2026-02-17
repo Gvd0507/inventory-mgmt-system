@@ -7,7 +7,6 @@ import Dashboard from './components/Dashboard';
 import Items from './components/Items';
 import Sales from './components/Sales';
 import Reports from './components/Reports';
-import Settings from './components/Settings';
 import Login from './components/Login';
 import Toast from './components/Toast';
 
@@ -54,7 +53,6 @@ function AppLayout() {
           <Route path="/items" element={<Items showToast={showToast} />} />
           <Route path="/sales" element={<Sales showToast={showToast} />} />
           <Route path="/reports" element={<Reports showToast={showToast} />} />
-          <Route path="/settings" element={<Settings showToast={showToast} />} />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </main>

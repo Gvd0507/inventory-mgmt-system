@@ -18,7 +18,7 @@ connectDB();
 const itemRoutes = require('./routes/items');
 const saleRoutes = require('./routes/sales');
 const authRoutes = require('./routes/auth');
-const settingsRoutes = require('./routes/settings');
+const purchaseRoutes = require('./routes/purchases');
 
 // Basic test route
 app.get('/', (req, res) => {
@@ -29,8 +29,8 @@ app.get('/', (req, res) => {
     endpoints: {
       items: '/api/items',
       sales: '/api/sales',
+      purchases: '/api/purchases',
       auth: '/api/auth',
-      settings: '/api/settings',
       health: '/health'
     },
     timestamp: new Date().toISOString()
@@ -49,8 +49,9 @@ app.get('/health', (req, res) => {
 // API Routes
 app.use('/api/items', itemRoutes);
 app.use('/api/sales', saleRoutes);
+app.use('/api/purchases', purchaseRoutes);
 app.use('/api/auth', authRoutes);
-app.use('/api/settings', settingsRoutes);
+
 
 // 404 handler
 app.use((req, res) => {

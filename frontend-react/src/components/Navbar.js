@@ -1,11 +1,11 @@
 import React from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { LogOut, User, Settings as SettingsIcon } from 'lucide-react';
+import { LogOut, User } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import NotificationCenter from './NotificationCenter';
 
 function Navbar() {
-  const { user, logout, isAdmin } = useAuth();
+  const { user, logout } = useAuth();
   const navigate = useNavigate();
 
   const tabs = [
@@ -47,19 +47,7 @@ function Navbar() {
           <div className="user-info">
             <User size={18} />
             <span className="user-name">{user?.username}</span>
-            {user?.role === 'admin' && (
-              <span className="user-badge">Admin</span>
-            )}
           </div>
-          {isAdmin && (
-            <button 
-              onClick={() => navigate('/settings')} 
-              className="btn-icon" 
-              title="Settings"
-            >
-              <SettingsIcon size={18} />
-            </button>
-          )}
           <button onClick={handleLogout} className="btn-logout" title="Logout">
             <LogOut size={18} />
           </button>
