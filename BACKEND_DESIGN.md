@@ -5,7 +5,73 @@ Build a complete, understandable DBMS project in 3 weeks using Node.js, Express,
 
 ---
 
-## 📁 Backend Structure
+## � Design Philosophy: Keep It Simple for Small Shops
+
+### Core Principle
+This system is **intentionally designed for small retail shops**, not enterprise corporations. Every design decision reflects what a shop owner would actually use in daily operations.
+
+### What Makes This Realistic
+
+#### ✅ Features We Include
+1. **Purchase Tracking** - Shops buy inventory before selling it (often overlooked!)
+2. **Per-Item Reorder Points** - Milk threshold ≠ notebooks threshold
+3. **Cost Price Tracking** - Essential for profit margin calculation
+4. **Simple Authentication** - Secure, but no complex hierarchies
+5. **Atomic Operations** - Race condition prevention (critical for correctness)
+6. **Denormalization** - Store itemName in transactions (performance over purity)
+
+#### ❌ Features We Deliberately Exclude
+1. **Admin/Staff Roles** - Small shop has 1-2 users with equal access
+2. **Batch Operations** - Small inventory (50-100 items) added one-by-one
+3. **CSV Import** - Manual entry more realistic for small shops
+4. **Complex Settings** - ~~10+ fields~~ → removed entirely (per-item config better)
+5. **Email Alerts** - Shop owner checks app manually
+6. **Multi-Currency** - Local shop uses one currency
+
+### Why This Matters for DBMS Assignment
+
+#### Shows Strong Database Design Judgment
+- **Understanding Requirements**: Analyzing what users actually need vs academic bloat
+- **Practical Schema Design**: Adding `costPrice` and `reorderPoint` fields based on real needs
+- **Denormalization Strategy**: Knowing when to duplicate data for performance
+- **Atomic Operations**: Preventing race conditions with `$inc` operator
+- **Indexing Decisions**: Adding indexes where queries actually happen
+
+#### Demonstrates Real-World Thinking
+Professors value students who can:
+- Identify unnecessary complexity
+- Design for actual use cases
+- Make informed trade-offs
+- Explain design decisions
+
+> "A shop needs purchase tracking more than it needs admin roles."  
+> This sentence alone shows you understand database design is about **solving real problems**, not just implementing textbook features.
+
+### Impact on Database Design
+
+**Collections Reflect Reality:**
+- ✅ `Items` - Products the shop sells
+- ✅ `Sales` - Daily transactions (money in)
+- ✅ `Purchases` - Restocking (money out)
+- ✅ `Users` - Simplified authentication (no roles)
+- ❌ ~~`Settings`~~ - Removed (per-item config better)
+
+**Schema Fields Reflect Reality:**
+- `Item.costPrice` - Calculate profit (selling price - cost)
+- `Item.reorderPoint` - Custom threshold per product
+- `Item.preferredSupplier` - Who to buy from when low stock
+- `Sale.itemName` - Denormalized (historical accuracy)
+- `Purchase.supplier` - Track vendors
+
+**Operations Reflect Reality:**
+- Sale → Decrement stock atomically
+- Purchase → Increment stock + update cost price atomically
+- Search → Simple regex (shops search by product name)
+- Low stock → Uses per-item thresholds (not global setting)
+
+---
+
+## �📁 Backend Structure
 
 ```
 backend/
