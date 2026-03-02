@@ -27,13 +27,20 @@ function Reports({ showToast }) {
     }
   };
 
-  // Calculate low stock items
-  const lowStockItems = items.filter((item) => item.quantity < 10);
+  // Calculate low stock items using each item's own reorderPoint
+  const lowStockItems = items.filter((item) => item.quantity <= (item.reorderPoint ?? 2));
 
   // Calculate sales summary
-  const totalRevenue = sales.reduce((sum, sale) => sum + sale.totalAmount, 0);
+  const totalRevenue = sales.reduce((sum, sale) => sum + (Number(sale.totalAmount) || 0), 0);
   const totalItemsSold = sales.reduce((sum, sale) => sum + sale.quantitySold, 0);
   const avgOrderValue = sales.length > 0 ? totalRevenue / sales.length : 0;
+
+  // Calculate profit from sold items using cost price snapshotted at time of sale
+  const totalCOGS = sales.reduce((sum, sale) => {
+    return sum + (sale.costPriceAtSale || 0) * sale.quantitySold;
+  }, 0);
+  const totalProfit = totalRevenue - totalCOGS;
+  const profitMarginPct = totalRevenue > 0 ? (totalProfit / totalRevenue) * 100 : 0;
 
   // Calculate top selling items
   const itemSales = {};
@@ -85,7 +92,7 @@ function Reports({ showToast }) {
         <h1 className="section-title">Reports & Analytics</h1>
         <div style={{ display: 'flex', gap: '12px' }}>
           <button 
-            className="btn btn-success" 
+            className="btn btn-outline-export"
             onClick={() => {
               exportReportToCSV({
                 stats: {
@@ -105,12 +112,12 @@ function Reports({ showToast }) {
             📥 Export CSV
           </button>
           <button 
-            className="btn btn-primary" 
+            className="btn btn-outline-action"
             onClick={() => window.print()}
           >
             🖨️ Print
           </button>
-          <button className="btn btn-primary" onClick={loadReports}>
+          <button className="btn btn-outline-action" onClick={loadReports}>
             🔄 Refresh
           </button>
         </div>
@@ -183,6 +190,73 @@ function Reports({ showToast }) {
                   <span className="report-item-name">Avg. Order Value</span>
                   <span className="report-item-name" style={{ color: 'var(--color-primary)' }}>
                     {formatCurrency(avgOrderValue)}
+                  </span>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Profit from Sales */}
+        <div className="report-card">
+          <h3 className="report-card-title">
+            💹 Profit from Sales
+          </h3>
+          {sales.length > 0 && totalCOGS === 0 && (
+            <div style={{
+              background: '#fff7ed',
+              border: '1.5px solid #fb923c',
+              borderRadius: '8px',
+              padding: '10px 14px',
+              marginBottom: '12px',
+              fontSize: '13px',
+              color: '#9a3412',
+              lineHeight: '1.5'
+            }}>
+              <strong>⚠️ Cost price not set.</strong> Go to <strong>Items tab → Edit</strong> each item → enter <strong>Total Cost</strong> → Save. Then re-record your sales.
+            </div>
+          )}
+          {sales.length === 0 ? (
+            <div style={{ textAlign: 'center', padding: '20px', color: 'var(--text-secondary)' }}>
+              <div style={{ fontSize: '32px', marginBottom: '8px' }}>📉</div>
+              <p>No sales recorded yet</p>
+            </div>
+          ) : (
+            <div>
+              <div className="report-item">
+                <div className="report-item-header">
+                  <span className="report-item-name">Total Revenue</span>
+                  <span className="report-item-name">{formatCurrency(totalRevenue)}</span>
+                </div>
+              </div>
+              <div className="report-item">
+                <div className="report-item-header">
+                  <span className="report-item-name">Cost of Goods Sold</span>
+                  <span className="report-item-name" style={{ color: '#ef4444' }}>
+                    − {formatCurrency(totalCOGS)}
+                  </span>
+                </div>
+              </div>
+              <div className="report-item" style={{ borderTop: '2px solid var(--border-color)', paddingTop: '8px', marginTop: '4px' }}>
+                <div className="report-item-header">
+                  <span className="report-item-name" style={{ fontWeight: '700' }}>Net Profit</span>
+                  <span className="report-item-name" style={{
+                    color: totalProfit >= 0 ? '#10b981' : '#ef4444',
+                    fontWeight: '700',
+                    fontSize: '18px'
+                  }}>
+                    {formatCurrency(totalProfit)}
+                  </span>
+                </div>
+              </div>
+              <div className="report-item">
+                <div className="report-item-header">
+                  <span className="report-item-name">Profit Margin</span>
+                  <span className="report-item-name" style={{
+                    color: profitMarginPct >= 0 ? '#10b981' : '#ef4444',
+                    fontWeight: '600'
+                  }}>
+                    {profitMarginPct.toFixed(1)}%
                   </span>
                 </div>
               </div>

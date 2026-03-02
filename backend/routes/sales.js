@@ -70,6 +70,7 @@ router.post('/', protect, async (req, res) => {
       itemName: item.name, // Denormalized for performance
       quantitySold,
       pricePerUnit: item.price,
+      costPriceAtSale: item.costPrice || 0, // Snapshot cost at time of sale
       totalAmount: item.price * quantitySold // Auto-calculated by model
     });
 

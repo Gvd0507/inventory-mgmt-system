@@ -1,4 +1,4 @@
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 // Helper function for API calls
 async function apiCall(endpoint, options = {}) {
@@ -84,7 +84,8 @@ export const purchasesAPI = {
 
 // Utility functions
 export const formatCurrency = (amount) => {
-  return '₹' + Math.round(amount).toLocaleString('en-IN');
+  const num = parseFloat(amount) || 0;
+  return '₹' + Math.round(num).toLocaleString('en-IN');
 };
 
 export const formatDate = (dateString) => {

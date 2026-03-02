@@ -14,6 +14,7 @@ function Items({ showToast }) {
     description: '',
     category: '',
     price: '',
+    totalCost: '',
     quantity: '',
     sku: '',
     reorderPoint: '10',
@@ -50,17 +51,28 @@ function Items({ showToast }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    if (!formData.name || !formData.category || !formData.price || !formData.quantity || !formData.sku) {
+    if (!formData.name || !formData.category || !formData.price || !formData.quantity || !formData.sku || !formData.preferredSupplier) {
       showToast('Please fill all required fields', 'error');
+      return;
+    }
+    if (!formData.totalCost || parseFloat(formData.totalCost) <= 0) {
+      showToast('Total Cost must be greater than 0', 'error');
       return;
     }
 
     try {
+      const payload = {
+        ...formData,
+        price: parseFloat(formData.price) || 0,
+        totalCost: parseFloat(formData.totalCost) || 0,
+        quantity: parseInt(formData.quantity) || 0,
+        reorderPoint: parseInt(formData.reorderPoint) || 0,
+      };
       if (editingItem) {
-        await itemsAPI.update(editingItem._id, formData);
+        await itemsAPI.update(editingItem._id, payload);
         showToast('Item updated successfully', 'success');
       } else {
-        await itemsAPI.create(formData);
+        await itemsAPI.create(payload);
         showToast('Item created successfully', 'success');
       }
       
@@ -78,9 +90,10 @@ function Items({ showToast }) {
       description: item.description || '',
       category: item.category,
       price: item.price,
+      totalCost: item.costPrice > 0 && item.quantity > 0 ? (item.costPrice * item.quantity).toFixed(2) : '',
       quantity: item.quantity,
       sku: item.sku,
-      reorderPoint: item.reorderPoint || 10,
+      reorderPoint: item.reorderPoint || 2,
       preferredSupplier: item.preferredSupplier || '',
     });
     setShowForm(true);
@@ -107,9 +120,10 @@ function Items({ showToast }) {
       description: '',
       category: '',
       price: '',
+      totalCost: '',
       quantity: '',
       sku: '',
-      reorderPoint: '10',
+      reorderPoint: '2',
       preferredSupplier: '',
     });
     setEditingItem(null);
@@ -120,7 +134,7 @@ function Items({ showToast }) {
     setRestockingItem(item);
     setRestockForm({
       quantity: '',
-      costPerUnit: item.costPrice || '',
+      totalCost: '',
       supplier: item.preferredSupplier || '',
       notes: '',
     });
@@ -134,7 +148,7 @@ function Items({ showToast }) {
   const handleRestockSubmit = async (e) => {
     e.preventDefault();
     
-    if (!restockForm.quantity || !restockForm.costPerUnit || !restockForm.supplier) {
+    if (!restockForm.quantity || !restockForm.totalCost || !restockForm.supplier) {
       showToast('Please fill all required fields', 'error');
       return;
     }
@@ -143,14 +157,14 @@ function Items({ showToast }) {
       await purchasesAPI.create({
         itemId: restockingItem._id,
         quantityPurchased: parseInt(restockForm.quantity),
-        costPerUnit: parseFloat(restockForm.costPerUnit),
+        totalCost: parseFloat(restockForm.totalCost),
         supplier: restockForm.supplier,
         notes: restockForm.notes,
       });
       
       showToast(`Restocked ${restockForm.quantity} units of ${restockingItem.name}`, 'success');
       setRestockingItem(null);
-      setRestockForm({ quantity: '', costPerUnit: '', supplier: '', notes: '' });
+      setRestockForm({ quantity: '', totalCost: '', supplier: '', notes: '' });
       loadItems();
     } catch (error) {
       showToast(error.message || 'Failed to restock item', 'error');
@@ -159,7 +173,7 @@ function Items({ showToast }) {
 
   const closeRestockModal = () => {
     setRestockingItem(null);
-    setRestockForm({ quantity: '', costPerUnit: '', supplier: '', notes: '' });
+    setRestockForm({ quantity: '', totalCost: '', supplier: '', notes: '' });
   };
 
   const filteredItems = items.filter((item) =>
@@ -186,14 +200,14 @@ function Items({ showToast }) {
         <div style={{ display: 'flex', gap: '12px' }}>
           {!showForm && !editingItem && (
             <button 
-              className="btn btn-primary" 
+              className="btn btn-outline-action" 
               onClick={() => setShowForm(true)}
             >
               ➕ Add Item
             </button>
           )}
           <button 
-            className="btn btn-success" 
+            className="btn btn-outline-export" 
             onClick={() => {
               exportItemsToCSV(items);
               showToast('Items exported successfully!', 'success');
@@ -241,7 +255,7 @@ function Items({ showToast }) {
 
           <div className="form-row">
             <div className="form-group">
-              <label className="form-label">Price (₹) *</label>
+              <label className="form-label">Selling Price per Unit (₹) *</label>
               <input
                 type="number"
                 name="price"
@@ -253,6 +267,26 @@ function Items({ showToast }) {
                 min="0"
                 required
               />
+            </div>
+            <div className="form-group">
+              <label className="form-label">Total Cost (₹) *</label>
+              <input
+                type="number"
+                name="totalCost"
+                value={formData.totalCost}
+                onChange={handleInputChange}
+                className="form-input"
+                placeholder="700"
+                step="1"
+                min="0"
+                required
+              />
+              <small>Total amount paid for all units</small>
+              {formData.totalCost && formData.quantity && Number(formData.quantity) > 0 && (
+                <small style={{ display: 'block', color: 'var(--text-secondary)', marginTop: '2px' }}>
+                  Cost per unit: ₹{(parseFloat(formData.totalCost) / parseInt(formData.quantity)).toFixed(2)}
+                </small>
+              )}
             </div>
             <div className="form-group">
               <label className="form-label">Quantity *</label>
@@ -296,7 +330,7 @@ function Items({ showToast }) {
               <small>Alert when stock falls below this quantity</small>
             </div>
             <div className="form-group">
-              <label className="form-label">Preferred Supplier</label>
+              <label className="form-label">Preferred Supplier *</label>
               <input
                 type="text"
                 name="preferredSupplier"
@@ -304,6 +338,7 @@ function Items({ showToast }) {
                 onChange={handleInputChange}
                 className="form-input"
                 placeholder="ABC Suppliers"
+                required
               />
               <small>Vendor to contact for restocking</small>
             </div>
@@ -365,7 +400,7 @@ function Items({ showToast }) {
                   <h3 className="item-card-name">{item.name}</h3>
                   <p className="item-card-category">{item.category}</p>
                 </div>
-                <span className={`badge ${item.quantity <= (item.reorderPoint || 10) ? 'badge-warning' : 'badge-success'}`}>
+                <span className={`badge ${item.quantity < (item.reorderPoint || 10) ? 'badge-warning' : 'badge-success'}`}>
                   {item.quantity} in stock
                 </span>
               </div>
@@ -380,24 +415,6 @@ function Items({ showToast }) {
                   <span className="item-card-label">Selling Price</span>
                   <span className="item-card-value">{formatCurrency(item.price)}</span>
                 </div>
-                {item.costPrice > 0 && (
-                  <>
-                    <div className="item-card-detail">
-                      <span className="item-card-label">Cost Price</span>
-                      <span className="item-card-value">{formatCurrency(item.costPrice)}</span>
-                    </div>
-                    <div className="item-card-detail">
-                      <span className="item-card-label">Profit Margin</span>
-                      <span className="item-card-value" style={{ 
-                        color: item.price > item.costPrice ? '#10b981' : '#ef4444',
-                        fontWeight: '600'
-                      }}>
-                        {formatCurrency(item.price - item.costPrice)} 
-                        ({Math.round(((item.price - item.costPrice) / item.price) * 100)}%)
-                      </span>
-                    </div>
-                  </>
-                )}
                 <div className="item-card-detail">
                   <span className="item-card-label">SKU</span>
                   <span className="item-card-value">{item.sku}</span>
@@ -478,18 +495,24 @@ function Items({ showToast }) {
                     />
                   </div>
                   <div className="form-group">
-                    <label className="form-label">Cost Per Unit (₹) *</label>
+                    <label className="form-label">Total Cost (₹) *</label>
                     <input
                       type="number"
-                      name="costPerUnit"
-                      value={restockForm.costPerUnit}
+                      name="totalCost"
+                      value={restockForm.totalCost}
                       onChange={handleRestockInputChange}
                       className="form-input"
-                      placeholder="25"
+                      placeholder="1250"
                       step="0.01"
                       min="0"
                       required
                     />
+                    <small>Total amount paid for all units</small>
+                    {restockForm.totalCost && restockForm.quantity && Number(restockForm.quantity) > 0 && (
+                      <small style={{ display: 'block', color: 'var(--text-secondary)', marginTop: '2px' }}>
+                        Cost per unit: ₹{(parseFloat(restockForm.totalCost) / parseInt(restockForm.quantity)).toFixed(2)}
+                      </small>
+                    )}
                   </div>
                 </div>
                 
@@ -518,7 +541,7 @@ function Items({ showToast }) {
                   />
                 </div>
                 
-                {restockForm.quantity && restockForm.costPerUnit && (
+                {restockForm.quantity && restockForm.totalCost && (
                   <div style={{
                     background: 'var(--primary-light)',
                     padding: '12px 16px',
@@ -528,9 +551,9 @@ function Items({ showToast }) {
                     justifyContent: 'space-between',
                     alignItems: 'center'
                   }}>
-                    <span style={{ fontWeight: '600' }}>Total Cost:</span>
+                    <span style={{ fontWeight: '600' }}>Cost Per Unit:</span>
                     <span style={{ fontSize: '20px', fontWeight: 'bold', color: 'var(--primary)' }}>
-                      {formatCurrency(restockForm.quantity * restockForm.costPerUnit)}
+                      {formatCurrency(restockForm.totalCost / restockForm.quantity)}
                     </span>
                   </div>
                 )}

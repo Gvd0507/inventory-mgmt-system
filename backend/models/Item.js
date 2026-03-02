@@ -35,6 +35,12 @@ const itemSchema = new mongoose.Schema({
     default: 0,
     min: [0, 'Cost price cannot be negative']
   },
+
+  // Per-unit profit (price - costPrice), computed on the backend
+  profit: {
+    type: Number,
+    default: null
+  },
   
   quantity: {
     type: Number,
@@ -49,7 +55,7 @@ const itemSchema = new mongoose.Schema({
   // Per-item reorder point (when to restock this specific item)
   reorderPoint: {
     type: Number,
-    default: 10,
+    default: 2,
     min: [0, 'Reorder point cannot be negative']
   },
   
@@ -64,7 +70,7 @@ const itemSchema = new mongoose.Schema({
   // Preferred supplier for restocking (realistic feature)
   preferredSupplier: {
     type: String,
-    default: '',
+    required: [true, 'Preferred supplier is required'],
     trim: true
   }
 }, {

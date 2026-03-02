@@ -11,13 +11,13 @@ const { protect } = require('../middleware/auth');
  */
 router.post('/', protect, async (req, res) => {
   try {
-    const { itemId, supplier, quantityPurchased, costPerUnit, notes } = req.body;
+    const { itemId, supplier, quantityPurchased, totalCost, notes } = req.body;
 
     // Validation
-    if (!itemId || !supplier || !quantityPurchased || costPerUnit === undefined) {
+    if (!itemId || !supplier || !quantityPurchased || totalCost === undefined) {
       return res.status(400).json({
         success: false,
-        error: 'Please provide itemId, supplier, quantityPurchased, and costPerUnit'
+        error: 'Please provide itemId, supplier, quantityPurchased, and totalCost'
       });
     }
 
@@ -28,7 +28,7 @@ router.post('/', protect, async (req, res) => {
       });
     }
 
-    if (costPerUnit < 0) {
+    if (totalCost < 0) {
       return res.status(400).json({
         success: false,
         error: 'Cost cannot be negative'
@@ -44,8 +44,8 @@ router.post('/', protect, async (req, res) => {
       });
     }
 
-    // Calculate total cost
-    const totalCost = costPerUnit * quantityPurchased;
+    // Derive per-unit cost from total
+    const costPerUnit = parseFloat(totalCost) / parseInt(quantityPurchased);
 
     // Create purchase record
     const purchase = new Purchase({

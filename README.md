@@ -97,10 +97,10 @@ This system demonstrates **good database design judgment** by focusing on featur
 2. Install dependencies: `npm install`
 3. **Create `.env` file:** `cp .env.example .env` or create manually with:
    ```env
-   REACT_APP_API_URL=http://localhost:5000/api
+   VITE_API_URL=http://localhost:5000/api
    ```
-4. Start app: `npm start`
-5. App opens at: `http://localhost:3000`
+4. Start app: `npm run dev`
+5. App opens at: `http://localhost:5173`
 
 ### Database Setup
 - **Option 1 (Local):** Install MongoDB locally and run `mongod`
@@ -122,8 +122,8 @@ This system demonstrates **good database design judgment** by focusing on featur
 
 ### "Network Error" on Login
 - ✅ Ensure backend server is running on port 5000
-- ✅ Check `frontend-react/.env` has correct `REACT_APP_API_URL`
-- ✅ After changing `.env`, restart the frontend (`Ctrl+C` then `npm start`)
+- ✅ Check `frontend-react/.env` has correct `VITE_API_URL`
+- ✅ After changing `.env`, restart the frontend (`Ctrl+C` then `npm run dev`)
 
 ### Database Connection Error
 - ✅ Verify MongoDB is running: `mongod --version`
@@ -148,8 +148,8 @@ This system demonstrates **good database design judgment** by focusing on featur
 
 ### Frontend
 - **React.js** - UI library
+- **Vite** - Build tool (fast HMR & builds)
 - **React Router** - Client-side routing
-- **Axios** - HTTP client
 - **Chart.js** - Data visualization
 - **CSS3** - Styling (no frameworks for custom design)
 
@@ -249,9 +249,9 @@ If expanding the project:
 cd backend
 npm run dev
 
-# Frontend with hot reload
+# Frontend with Vite HMR (instant updates)
 cd frontend-react
-npm start
+npm run dev
 ```
 
 ### Project Structure

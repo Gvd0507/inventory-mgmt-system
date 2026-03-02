@@ -39,7 +39,14 @@ const saleSchema = new mongoose.Schema({
     required: [true, 'Total amount is required'],
     min: [0, 'Total amount cannot be negative']
   },
-  
+
+  // Snapshot of cost price at time of sale (for accurate profit calculation)
+  costPriceAtSale: {
+    type: Number,
+    default: 0,
+    min: [0, 'Cost price cannot be negative']
+  },
+
   saleDate: {
     type: Date,
     default: Date.now

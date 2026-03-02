@@ -32,11 +32,11 @@ function Dashboard({ showToast }) {
       const items = itemsData.data || [];
       const sales = salesData.data || [];
 
-      const totalStock = items.reduce((sum, item) => sum + item.quantity, 0);
-      const totalValue = items.reduce((sum, item) => sum + (item.quantity * item.price), 0);
-      const totalRevenue = sales.reduce((sum, sale) => sum + sale.totalPrice, 0);
+      const totalStock = items.reduce((sum, item) => sum + (Number(item.quantity) || 0), 0);
+      const totalValue = items.reduce((sum, item) => sum + ((Number(item.quantity) || 0) * (Number(item.price) || 0)), 0);
+      const totalRevenue = sales.reduce((sum, sale) => sum + (Number(sale.totalAmount) || 0), 0);
       // Use per-item reorderPoint instead of global threshold
-      const lowStockItems = items.filter((item) => item.quantity <= (item.reorderPoint || 10));
+      const lowStockItems = items.filter((item) => Number(item.quantity) < (Number(item.reorderPoint) || 10));
       const lowStockCount = lowStockItems.length;
 
       setStats({
@@ -68,7 +68,7 @@ function Dashboard({ showToast }) {
     <div className="container">
       <div className="section-header">
         <h1 className="section-title">Dashboard Overview</h1>
-        <button className="btn btn-primary" onClick={loadDashboard}>
+        <button className="btn btn-outline-action" onClick={loadDashboard}>
           🔄 Refresh
         </button>
       </div>
@@ -90,7 +90,7 @@ function Dashboard({ showToast }) {
               </div>
             </div>
             <div className="alert-actions">
-              <button className="btn-alert-action" onClick={() => navigate('/purchases')}>
+              <button className="btn-alert-action" onClick={() => navigate('/items')}>
                 Restock Now
               </button>
               <button className="btn-alert-close" onClick={() => setShowLowStockBanner(false)}>

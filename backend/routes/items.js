@@ -125,7 +125,7 @@ router.get('/:id', async (req, res) => {
  */
 router.post('/', protect, async (req, res) => {
   try {
-    const { name, description, category, price, quantity, sku } = req.body;
+    const { name, description, category, price, quantity, sku, reorderPoint, preferredSupplier, totalCost } = req.body;
 
     // Basic validation
     if (!name || !price || quantity === undefined) {
@@ -142,6 +142,10 @@ router.post('/', protect, async (req, res) => {
       });
     }
 
+    // Derive per-unit cost price from total cost
+    const costPrice = (totalCost && quantity > 0) ? parseFloat(totalCost) / parseInt(quantity) : 0;
+    const profit = costPrice > 0 ? parseFloat(price) - costPrice : null;
+
     // Create new item
     const item = new Item({
       name,
@@ -149,7 +153,11 @@ router.post('/', protect, async (req, res) => {
       category,
       price,
       quantity,
-      sku: sku || undefined // Let model generate if not provided
+      sku: sku || undefined, // Let model generate if not provided
+      reorderPoint,
+      preferredSupplier,
+      costPrice,
+      ...(profit !== null && { profit })
     });
 
     await item.save();
@@ -194,7 +202,15 @@ router.post('/', protect, async (req, res) => {
  */
 router.put('/:id', protect, async (req, res) => {
   try {
-    const { name, description, category, price, quantity, sku } = req.body;
+    const { name, description, category, price, quantity, sku, reorderPoint, preferredSupplier, totalCost } = req.body;
+
+    // Derive per-unit cost and profit if totalCost provided
+    const costPrice = (totalCost !== undefined && quantity > 0)
+      ? parseFloat(totalCost) / parseInt(quantity)
+      : undefined;
+    const profit = (costPrice !== undefined && price !== undefined)
+      ? parseFloat(price) - costPrice
+      : undefined;
 
     // Validation
     if (price !== undefined && price < 0) {
@@ -214,7 +230,10 @@ router.put('/:id', protect, async (req, res) => {
     // Find and update
     const item = await Item.findByIdAndUpdate(
       req.params.id,
-      { name, description, category, price, quantity, sku },
+      { name, description, category, price, quantity, sku, reorderPoint, preferredSupplier,
+        ...(costPrice !== undefined && { costPrice }),
+        ...(profit !== undefined && { profit })
+      },
       { 
         new: true,           // Return updated document
         runValidators: true  // Run schema validators
@@ -307,16 +326,40 @@ router.delete('/:id', protect, async (req, res) => {
 });
 
 /**
+ * @route   GET /api/items/low-stock
+ * @desc    Get items where quantity <= their own reorderPoint
+ * @access  Public
+ */
+router.get('/low-stock', async (req, res) => {
+  try {
+    const items = await Item.find({ $expr: { $lte: ['$quantity', '$reorderPoint'] } })
+      .sort({ quantity: 1 });
+
+    res.json({
+      success: true,
+      count: items.length,
+      data: items
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: 'Failed to fetch low stock items',
+      message: error.message
+    });
+  }
+});
+
+/**
  * @route   GET /api/items/low-stock/:threshold
- * @desc    Get items below stock threshold
- * @param   threshold - Number (e.g., 10)
+ * @desc    Get items below a universal stock threshold (legacy / manual override)
+ * @param   threshold - Number
  * @access  Public
  */
 router.get('/low-stock/:threshold', async (req, res) => {
   try {
-    const threshold = parseInt(req.params.threshold) || 10;
+    const threshold = parseInt(req.params.threshold) || 2;
     
-    const items = await Item.find({ quantity: { $lt: threshold } })
+    const items = await Item.find({ quantity: { $lte: threshold } })
       .sort({ quantity: 1 });
 
     res.json({

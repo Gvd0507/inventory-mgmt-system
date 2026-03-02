@@ -98,7 +98,7 @@ function Sales({ showToast }) {
       <div className="section-header">
         <h1 className="section-title">Sales</h1>
         <button 
-          className="btn btn-success" 
+          className="btn btn-outline-export" 
           onClick={() => {
             exportSalesToCSV(sales);
             showToast('Sales exported successfully!', 'success');
