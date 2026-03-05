@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import Icon from './Icon';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -323,7 +324,7 @@ function Charts({ showToast }) {
       {/* Sales Trend Chart */}
       {salesTrendData && (
         <div className="chart-card">
-          <h3 className="chart-title">💰 Sales Trend</h3>
+          <h3 className="chart-title"><Icon name="dollar-sign" size={20} /> Sales Trend</h3>
           <div className="chart-wrapper" style={{ height: '300px' }}>
             <Line data={salesTrendData} options={lineOptions} />
           </div>
@@ -333,7 +334,7 @@ function Charts({ showToast }) {
       {/* Items by Category Chart */}
       {categoryData && (
         <div className="chart-card">
-          <h3 className="chart-title">📊 Items by Category</h3>
+          <h3 className="chart-title"><Icon name="bar-chart" size={20} /> Items by Category</h3>
           <div className="chart-wrapper" style={{ height: '300px' }}>
             <Bar data={categoryData} options={barOptions} />
           </div>
@@ -343,7 +344,7 @@ function Charts({ showToast }) {
       {/* Top Items by Value Chart */}
       {topItemsData && (
         <div className="chart-card">
-          <h3 className="chart-title">🏆 Top Items by Stock Value</h3>
+          <h3 className="chart-title"><Icon name="trending-up" size={20} /> Top Items by Stock Value</h3>
           <div className="chart-wrapper" style={{ height: '300px' }}>
             <Doughnut data={topItemsData} options={doughnutOptions} />
           </div>
@@ -353,7 +354,7 @@ function Charts({ showToast }) {
       {/* Low Stock Alert Chart */}
       {lowStockData && (
         <div className="chart-card">
-          <h3 className="chart-title">⚠️ Low Stock Alert</h3>
+          <h3 className="chart-title"><Icon name="alert-triangle" size={20} /> Low Stock Alert</h3>
           <div className="chart-wrapper" style={{ height: '250px' }}>
             <Bar data={lowStockData} options={barOptions} />
           </div>
@@ -363,7 +364,7 @@ function Charts({ showToast }) {
       {/* Empty State */}
       {!salesTrendData && !categoryData && !topItemsData && !lowStockData && (
         <div className="empty-state">
-          <div className="empty-icon">📊</div>
+          <div className="empty-icon"><Icon name="bar-chart" size={48} /></div>
           <h3>No Data Available</h3>
           <p>Add some items and make sales to see beautiful charts!</p>
         </div>

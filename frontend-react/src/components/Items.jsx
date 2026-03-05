@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { itemsAPI, purchasesAPI, formatCurrency } from '../api';
 import { exportItemsToCSV } from '../utils/exportData';
+import Icon from './Icon';
 
 function Items({ showToast }) {
   const [items, setItems] = useState([]);
@@ -203,7 +204,7 @@ function Items({ showToast }) {
               className="btn btn-outline-action" 
               onClick={() => setShowForm(true)}
             >
-              ➕ Add Item
+              <Icon name="plus" size={16} /> Add Item
             </button>
           )}
           <button 
@@ -214,7 +215,7 @@ function Items({ showToast }) {
             }}
             disabled={items.length === 0}
           >
-            📥 Export CSV
+            <Icon name="download" size={16} /> Export CSV
           </button>
         </div>
       </div>
@@ -223,7 +224,7 @@ function Items({ showToast }) {
       {(showForm || editingItem) && (
         <div className="form-card" style={{ animation: 'slideDown 0.3s ease-out' }}>
           <h3 className="form-title">
-            {editingItem ? '✏️ Edit Item' : '➕ Add New Item'}
+            {editingItem ? <><Icon name="edit" size={20} /> Edit Item</> : <><Icon name="plus" size={20} /> Add New Item</>}
           </h3>
           <form onSubmit={handleSubmit}>
           <div className="form-row">
@@ -381,7 +382,7 @@ function Items({ showToast }) {
       {/* Items Grid */}
       {filteredItems.length === 0 ? (
         <div className="empty-state">
-          <div className="empty-state-icon">📦</div>
+          <div className="empty-state-icon"><Icon name="package" size={48} /></div>
           <h3 className="empty-state-title">
             {searchTerm ? 'No items found' : 'No items yet'}
           </h3>
@@ -439,13 +440,13 @@ function Items({ showToast }) {
 
               <div className="item-card-actions">
                 <button onClick={() => handleRestockClick(item)} className="btn btn-success" style={{ flex: 1 }}>
-                  🛒 Restock
+                  <Icon name="shopping-cart" size={16} /> Restock
                 </button>
                 <button onClick={() => handleEdit(item)} className="btn btn-primary">
-                  ✏️ Edit
+                  <Icon name="edit" size={16} /> Edit
                 </button>
                 <button onClick={() => handleDelete(item._id, item.name)} className="btn btn-danger">
-                  🗑️ Delete
+                  <Icon name="trash" size={16} /> Delete
                 </button>
               </div>
             </div>
@@ -458,7 +459,7 @@ function Items({ showToast }) {
         <div className="modal-overlay" onClick={closeRestockModal}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
-              <h2>🛒 Restock Item</h2>
+              <h2><Icon name="shopping-cart" size={24} /> Restock Item</h2>
               <button className="modal-close" onClick={closeRestockModal}>×</button>
             </div>
             <div className="modal-body">

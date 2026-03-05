@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { itemsAPI, salesAPI, formatCurrency, formatDate } from '../api';
 import { exportSalesToCSV } from '../utils/exportData';
+import Icon from './Icon';
 
 function Sales({ showToast }) {
   const [items, setItems] = useState([]);
@@ -105,13 +106,13 @@ function Sales({ showToast }) {
           }}
           disabled={sales.length === 0}
         >
-          📥 Export CSV
+          <Icon name="download" size={16} /> Export CSV
         </button>
       </div>
 
       {/* Record Sale Form */}
       <div className="form-card">
-        <h3 className="form-title">💰 Record New Sale</h3>
+        <h3 className="form-title"><Icon name="dollar-sign" size={20} /> Record New Sale</h3>
         <form onSubmit={handleSubmit}>
           <div className="form-row">
             <div className="form-group">
@@ -179,7 +180,7 @@ function Sales({ showToast }) {
                   fontSize: '14px',
                   fontWeight: '500',
                 }}>
-                  ⚠️ Insufficient stock! Only {selectedItem.quantity} available.
+                  <Icon name="alert-triangle" size={16} /> Insufficient stock! Only {selectedItem.quantity} available.
                 </div>
               )}
             </div>
@@ -205,10 +206,10 @@ function Sales({ showToast }) {
 
       {/* Sales History */}
       <div className="card">
-        <h3 className="form-title">📜 Recent Sales</h3>
+        <h3 className="form-title">Recent Sales</h3>
         {sales.length === 0 ? (
           <div className="empty-state">
-            <div className="empty-state-icon">💰</div>
+            <div className="empty-state-icon"><Icon name="dollar-sign" size={48} /></div>
             <h3 className="empty-state-title">No sales yet</h3>
             <p className="empty-state-text">Record your first sale using the form above</p>
           </div>

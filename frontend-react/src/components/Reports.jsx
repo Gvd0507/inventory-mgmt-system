@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { itemsAPI, salesAPI, formatCurrency } from '../api';
 import { exportReportToCSV } from '../utils/exportData';
+import Icon from './Icon';
 
 function Reports({ showToast }) {
   const [items, setItems] = useState([]);
@@ -109,16 +110,16 @@ function Reports({ showToast }) {
               showToast('Report exported successfully!', 'success');
             }}
           >
-            📥 Export CSV
+            <Icon name="download" size={16} /> Export CSV
           </button>
           <button 
             className="btn btn-outline-action"
             onClick={() => window.print()}
           >
-            🖨️ Print
+            <Icon name="print" size={16} /> Print
           </button>
           <button className="btn btn-outline-action" onClick={loadReports}>
-            🔄 Refresh
+            <Icon name="refresh" size={16} /> Refresh
           </button>
         </div>
       </div>
@@ -127,11 +128,11 @@ function Reports({ showToast }) {
         {/* Low Stock Alert */}
         <div className="report-card">
           <h3 className="report-card-title">
-            ⚠️ Low Stock Alert
+            <Icon name="alert-triangle" size={20} /> Low Stock Alert
           </h3>
           {lowStockItems.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '20px', color: 'var(--text-secondary)' }}>
-              <div style={{ fontSize: '32px', marginBottom: '8px' }}>✅</div>
+              <div style={{ fontSize: '32px', marginBottom: '8px' }}><Icon name="check" size={32} /></div>
               <p>All items have sufficient stock!</p>
             </div>
           ) : (
@@ -156,11 +157,11 @@ function Reports({ showToast }) {
         {/* Sales Summary */}
         <div className="report-card">
           <h3 className="report-card-title">
-            📊 Sales Summary
+            <Icon name="bar-chart" size={20} /> Sales Summary
           </h3>
           {sales.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '20px', color: 'var(--text-secondary)' }}>
-              <div style={{ fontSize: '32px', marginBottom: '8px' }}>💰</div>
+              <div style={{ fontSize: '32px', marginBottom: '8px' }}><Icon name="dollar-sign" size={32} /></div>
               <p>No sales recorded yet</p>
             </div>
           ) : (
@@ -200,7 +201,7 @@ function Reports({ showToast }) {
         {/* Profit from Sales */}
         <div className="report-card">
           <h3 className="report-card-title">
-            💹 Profit from Sales
+            <Icon name="trending-up" size={20} /> Profit from Sales
           </h3>
           {sales.length > 0 && totalCOGS === 0 && (
             <div style={{
@@ -213,12 +214,12 @@ function Reports({ showToast }) {
               color: '#9a3412',
               lineHeight: '1.5'
             }}>
-              <strong>⚠️ Cost price not set.</strong> Go to <strong>Items tab → Edit</strong> each item → enter <strong>Total Cost</strong> → Save. Then re-record your sales.
+              <strong><Icon name="alert-triangle" size={14} /> Cost price not set.</strong> Go to <strong>Items tab → Edit</strong> each item → enter <strong>Total Cost</strong> → Save. Then re-record your sales.
             </div>
           )}
           {sales.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '20px', color: 'var(--text-secondary)' }}>
-              <div style={{ fontSize: '32px', marginBottom: '8px' }}>📉</div>
+              <div style={{ fontSize: '32px', marginBottom: '8px' }}><Icon name="trending-up" size={32} /></div>
               <p>No sales recorded yet</p>
             </div>
           ) : (
@@ -267,11 +268,11 @@ function Reports({ showToast }) {
         {/* Top Selling Items */}
         <div className="report-card">
           <h3 className="report-card-title">
-            🏆 Top Selling Items
+            <Icon name="trending-up" size={20} /> Top Selling Items
           </h3>
           {topItems.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '20px', color: 'var(--text-secondary)' }}>
-              <div style={{ fontSize: '32px', marginBottom: '8px' }}>📈</div>
+              <div style={{ fontSize: '32px', marginBottom: '8px' }}><Icon name="trending-up" size={32} /></div>
               <p>No sales data available</p>
             </div>
           ) : (
@@ -310,11 +311,11 @@ function Reports({ showToast }) {
         {/* Category Breakdown */}
         <div className="report-card">
           <h3 className="report-card-title">
-            📁 Category Breakdown
+            <Icon name="package" size={20} /> Category Breakdown
           </h3>
           {items.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '20px', color: 'var(--text-secondary)' }}>
-              <div style={{ fontSize: '32px', marginBottom: '8px' }}>📦</div>
+              <div style={{ fontSize: '32px', marginBottom: '8px' }}><Icon name="package" size={32} /></div>
               <p>No items available</p>
             </div>
           ) : (

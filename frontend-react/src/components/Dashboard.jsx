@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { itemsAPI, salesAPI, formatCurrency } from '../api';
 import Charts from './Charts';
+import Icon from './Icon';
 
 function Dashboard({ showToast }) {
   const navigate = useNavigate();
@@ -69,7 +70,7 @@ function Dashboard({ showToast }) {
       <div className="section-header">
         <h1 className="section-title">Dashboard Overview</h1>
         <button className="btn btn-outline-action" onClick={loadDashboard}>
-          🔄 Refresh
+          <Icon name="refresh" size={16} /> Refresh
         </button>
       </div>
 
@@ -77,7 +78,9 @@ function Dashboard({ showToast }) {
       {showLowStockBanner && stats.lowStockCount > 0 && (
         <div className="alert-banner warning">
           <div className="alert-banner-content">
-            <span className="alert-icon">⚠️</span>
+            <span className="alert-icon">
+              <Icon name="alert-triangle" size={20} />
+            </span>
             <div className="alert-text">
               <strong>{stats.lowStockCount} item{stats.lowStockCount > 1 ? 's' : ''}</strong> running low on stock!
               <div className="low-stock-items-preview">
@@ -94,7 +97,7 @@ function Dashboard({ showToast }) {
                 Restock Now
               </button>
               <button className="btn-alert-close" onClick={() => setShowLowStockBanner(false)}>
-                ✕
+                <Icon name="x" size={16} />
               </button>
             </div>
           </div>
@@ -103,7 +106,7 @@ function Dashboard({ showToast }) {
 
       <div className="stats-grid">
         <div className="stat-card">
-          <div className="stat-icon primary">📦</div>
+          <div className="stat-icon primary"><Icon name="package" size={28} /></div>
           <div className="stat-info">
             <h3>{stats.totalItems}</h3>
             <p>Total Items</p>
@@ -111,7 +114,7 @@ function Dashboard({ showToast }) {
         </div>
 
         <div className="stat-card">
-          <div className="stat-icon success">📊</div>
+          <div className="stat-icon success"><Icon name="bar-chart" size={28} /></div>
           <div className="stat-info">
             <h3>{stats.totalStock}</h3>
             <p>Total Stock</p>
@@ -119,7 +122,7 @@ function Dashboard({ showToast }) {
         </div>
 
         <div className="stat-card">
-          <div className="stat-icon warning">💵</div>
+          <div className="stat-icon warning"><Icon name="dollar-sign" size={28} /></div>
           <div className="stat-info">
             <h3>{formatCurrency(stats.totalValue)}</h3>
             <p>Inventory Value</p>
@@ -127,7 +130,7 @@ function Dashboard({ showToast }) {
         </div>
 
         <div className="stat-card">
-          <div className="stat-icon danger">💰</div>
+          <div className="stat-icon danger"><Icon name="dollar-sign" size={28} /></div>
           <div className="stat-info">
             <h3>{stats.totalSales}</h3>
             <p>Total Sales</p>
@@ -139,14 +142,14 @@ function Dashboard({ showToast }) {
         <h3 className="insights-title">Quick Insights</h3>
         <div className="insights-grid">
           <div className="insight-item">
-            <div className="insight-icon primary">💰</div>
+            <div className="insight-icon primary"><Icon name="dollar-sign" size={24} /></div>
             <div className="insight-content">
               <span className="insight-label">Total Revenue</span>
               <span className="insight-value">{formatCurrency(stats.totalRevenue)}</span>
             </div>
           </div>
           <div className="insight-item">
-            <div className="insight-icon warning">⚠️</div>
+            <div className="insight-icon warning"><Icon name="alert-triangle" size={24} /></div>
             <div className="insight-content">
               <span className="insight-label">Low Stock Items</span>
               <span className="insight-value">
@@ -155,7 +158,7 @@ function Dashboard({ showToast }) {
             </div>
           </div>
           <div className="insight-item">
-            <div className="insight-icon info">📈</div>
+            <div className="insight-icon info"><Icon name="trending-up" size={24} /></div>
             <div className="insight-content">
               <span className="insight-label">Avg. Sale Value</span>
               <span className="insight-value">

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
+import Icon from './Icon';
 
 function Purchases({ showToast }) {
   const { token } = useAuth();
@@ -149,14 +150,14 @@ function Purchases({ showToast }) {
     <div className="container">
       <div className="section-header">
         <div>
-          <h1 className="section-title">📦 Purchases & Restocking</h1>
+          <h1 className="section-title"><Icon name="package" size={24} /> Purchases & Restocking</h1>
           <p className="section-subtitle">Record inventory purchases from suppliers</p>
         </div>
         <button 
           onClick={() => setShowForm(!showForm)} 
           className="btn btn-primary"
         >
-          ➕ {showForm ? 'Cancel' : 'Record Purchase'}
+          {showForm ? 'Cancel' : 'Record Purchase'}
         </button>
       </div>
 
@@ -164,21 +165,21 @@ function Purchases({ showToast }) {
       {stats && (
         <div className="stats-grid">
           <div className="stat-card">
-            <div className="stat-icon primary">💰</div>
+            <div className="stat-icon primary"><Icon name="dollar-sign" size={28} /></div>
             <div className="stat-info">
               <h3>{formatCurrency(stats.totalSpent || 0)}</h3>
               <p>Total Spent</p>
             </div>
           </div>
           <div className="stat-card">
-            <div className="stat-icon success">📦</div>
+            <div className="stat-icon success"><Icon name="package" size={28} /></div>
             <div className="stat-info">
               <h3>{stats.totalQuantity || 0}</h3>
               <p>Total Quantity</p>
             </div>
           </div>
           <div className="stat-card">
-            <div className="stat-icon warning">👥</div>
+            <div className="stat-icon warning"><Icon name="trending-up" size={28} /></div>
             <div className="stat-info">
               <h3>{suppliers.length}</h3>
               <p>Suppliers</p>
@@ -190,7 +191,7 @@ function Purchases({ showToast }) {
       {/* Purchase Form */}
       {showForm && (
         <div className="form-card">
-          <h3 className="form-title">📝 Record New Purchase</h3>
+          <h3 className="form-title"><Icon name="file-text" size={20} /> Record New Purchase</h3>
           <form onSubmit={handleSubmit}>
             <div className="form-row">
               <div className="form-group">
@@ -295,7 +296,7 @@ function Purchases({ showToast }) {
 
             <div className="form-actions">
               <button type="submit" className="btn btn-success">
-                ✅ Record Purchase
+                <Icon name="check" size={16} /> Record Purchase
               </button>
             </div>
           </form>
@@ -304,10 +305,10 @@ function Purchases({ showToast }) {
 
       {/* Purchases Table */}
       <div className="card">
-        <h3 className="form-title">📋 Purchase History</h3>
+        <h3 className="form-title">Purchase History</h3>
         {purchases.length === 0 ? (
           <div className="empty-state">
-            <div className="empty-state-icon">📦</div>
+            <div className="empty-state-icon"><Icon name="package" size={48} /></div>
             <h3 className="empty-state-title">No purchases recorded yet</h3>
             <p className="empty-state-text">Record your first purchase using the form above</p>
           </div>

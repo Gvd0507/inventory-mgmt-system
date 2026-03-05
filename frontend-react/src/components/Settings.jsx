@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import Icon from './Icon';
 
 function Settings({ showToast }) {
   const [settings, setSettings] = useState(null);
@@ -109,15 +110,15 @@ function Settings({ showToast }) {
     <div className="container">
       <div className="section-header">
         <div>
-          <h1 className="section-title">⚙️ Settings</h1>
+          <h1 className="section-title"><Icon name="settings" size={24} /> Settings</h1>
           <p className="section-subtitle">Configure essential shop settings</p>
         </div>
         <div className="page-actions">
           <button onClick={handleReset} className="btn btn-secondary" disabled={saving}>
-            🔄 Reset to Defaults
+            <Icon name="refresh" size={16} /> Reset to Defaults
           </button>
           <button onClick={handleSave} className="btn btn-primary" disabled={saving}>
-            💾 {saving ? 'Saving...' : 'Save Settings'}
+            <Icon name="save" size={16} /> {saving ? 'Saving...' : 'Save Settings'}
           </button>
         </div>
       </div>

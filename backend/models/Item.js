@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const crypto = require('crypto');
 
 /**
  * Item Schema - Represents inventory items
@@ -86,7 +87,8 @@ itemSchema.pre('save', function(next) {
   if (!this.sku) {
     // Generate SKU: CATEGORY-RANDOM-TIMESTAMP
     const category = this.category ? this.category.substring(0, 4).toUpperCase() : 'ITEM';
-    const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+    // Use crypto.randomInt() for cryptographically secure random number (0-999)
+    const random = crypto.randomInt(0, 1000).toString().padStart(3, '0');
     const timestamp = Date.now().toString().slice(-4);
     this.sku = `${category}-${random}-${timestamp}`;
   }

@@ -3,16 +3,17 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import { LogOut, User } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import NotificationCenter from './NotificationCenter';
+import Icon from './Icon';
 
 function Navbar() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
   const tabs = [
-    { id: 'dashboard', path: '/', name: 'Dashboard', icon: '📊' },
-    { id: 'items', path: '/items', name: 'Items', icon: '📦' },
-    { id: 'sales', path: '/sales', name: 'Sales', icon: '💰' },
-    { id: 'reports', path: '/reports', name: 'Reports', icon: '📈' },
+    { id: 'dashboard', path: '/', name: 'Dashboard', icon: 'dashboard' },
+    { id: 'items', path: '/items', name: 'Items', icon: 'package' },
+    { id: 'sales', path: '/sales', name: 'Sales', icon: 'dollar-sign' },
+    { id: 'reports', path: '/reports', name: 'Reports', icon: 'trending-up' },
   ];
 
   const handleLogout = () => {
@@ -26,7 +27,9 @@ function Navbar() {
     <nav className="navbar">
       <div className="navbar-container">
         <NavLink to="/" className="navbar-brand">
-          <div className="navbar-brand-icon">📦</div>
+          <div className="navbar-brand-icon">
+            <Icon name="package" size={24} />
+          </div>
           <span>Inventory Pro</span>
         </NavLink>
         <div className="navbar-tabs">
@@ -37,7 +40,7 @@ function Navbar() {
               className={({ isActive }) => `nav-tab ${isActive ? 'active' : ''}`}
               end={tab.path === '/'}
             >
-              <span>{tab.icon}</span>
+              <Icon name={tab.icon} size={18} />
               <span>{tab.name}</span>
             </NavLink>
           ))}
