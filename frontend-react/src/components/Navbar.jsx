@@ -30,7 +30,7 @@ function Navbar() {
           <div className="navbar-brand-icon">
             <Icon name="package" size={24} />
           </div>
-          <span>Inventory Pro</span>
+          <span>Stockr</span>
         </NavLink>
         <div className="navbar-tabs">
           {tabs.map((tab) => (

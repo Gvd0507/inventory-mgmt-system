@@ -139,7 +139,7 @@ export function exportReportToCSV(reportData) {
   const { stats, items, sales } = reportData;
 
   // Create summary section
-  let csv = '=== INVENTORY MANAGEMENT REPORT ===\n\n';
+  let csv = '=== STOCKR REPORT ===\n\n';
   csv += `Generated: ${new Date().toLocaleString()}\n\n`;
   csv += '=== SUMMARY STATISTICS ===\n';
   csv += 'Metric,Value\n';

@@ -81,6 +81,30 @@ router.get('/', async (req, res) => {
 });
 
 /**
+ * @route   GET /api/items/low-stock
+ * @desc    Get items where quantity <= their own reorderPoint
+ * @access  Public
+ */
+router.get('/low-stock', async (req, res) => {
+  try {
+    const items = await Item.find({ $expr: { $lte: ['$quantity', '$reorderPoint'] } })
+      .sort({ quantity: 1 });
+
+    res.json({
+      success: true,
+      count: items.length,
+      data: items
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: 'Failed to fetch low stock items',
+      message: error.message
+    });
+  }
+});
+
+/**
  * @route   GET /api/items/:id
  * @desc    Get single item by ID
  * @access  Public
@@ -320,30 +344,6 @@ router.delete('/:id', protect, async (req, res) => {
     res.status(500).json({
       success: false,
       error: 'Failed to delete item',
-      message: error.message
-    });
-  }
-});
-
-/**
- * @route   GET /api/items/low-stock
- * @desc    Get items where quantity <= their own reorderPoint
- * @access  Public
- */
-router.get('/low-stock', async (req, res) => {
-  try {
-    const items = await Item.find({ $expr: { $lte: ['$quantity', '$reorderPoint'] } })
-      .sort({ quantity: 1 });
-
-    res.json({
-      success: true,
-      count: items.length,
-      data: items
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: 'Failed to fetch low stock items',
       message: error.message
     });
   }

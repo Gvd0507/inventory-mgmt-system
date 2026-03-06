@@ -1,4 +1,4 @@
-/* Print Styles for Inventory Management System */
+/* Print Styles for Stockr */
 
 @media print {
   /* Hide UI elements */
@@ -196,7 +196,7 @@
 
   /* Print header */
   .container::before {
-    content: "Inventory Management System - Printed on " attr(data-print-date);
+    content: "Stockr - Printed on " attr(data-print-date);
     display: block;
     text-align: center;
     font-size: 10pt;

@@ -1,5 +1,5 @@
 /* ========================================
-   PREMIUM INVENTORY MANAGEMENT SYSTEM
+   STOCKR - SMART INVENTORY MANAGEMENT
    Enterprise-Grade UI/UX Design
    ======================================== */
 
@@ -62,7 +62,7 @@
 .navbar-brand-icon {
   width: 44px;
   height: 44px;
-  background: var(--gradient-primary);
+  background: #f8fafc;
   border-radius: var(--radius);
   display: flex;
   align-items: center;

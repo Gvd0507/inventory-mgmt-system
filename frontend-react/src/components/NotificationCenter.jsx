@@ -16,7 +16,8 @@ function NotificationCenter() {
   const checkLowStockItems = async () => {
     try {
       const token = localStorage.getItem('authToken');
-      const response = await fetch('http://localhost:5000/api/items/low-stock', {
+      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+      const response = await fetch(`${API_URL}/items/low-stock`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
